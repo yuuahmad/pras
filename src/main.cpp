@@ -6,13 +6,13 @@
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C lcd(0x3F, 16, 2); // set the LCD address to 0x27 for a 16 chars and 2 line display
 
-#define REPORTING_PERIOD_MS 1000
+// #define REPORTING_PERIOD_MS 1000
 
 // Create a PulseOximeter object
 PulseOximeter pox;
 
 // Time at which the last beat occurred
-uint32_t tsLastReport = 0;
+unsigned long tsLastReport = 0;
 
 // Callback routine is executed when a pulse is detected
 void onBeatDetected()
@@ -62,7 +62,8 @@ void loop()
   pox.update();
 
   // Grab the updated heart rate and SpO2 levels
-  if (millis() - tsLastReport > REPORTING_PERIOD_MS)
+  unsigned long milisSekarang = millis();
+  if (milisSekarang - tsLastReport >= 1000)
   {
     Serial.print("Heart rate:");
     Serial.print(pox.getHeartRate());
@@ -80,6 +81,6 @@ void loop()
     lcd.print(pox.getSpO2());
     lcd.print("     ");
 
-    tsLastReport = millis();
+    tsLastReport = milisSekarang;
   }
 }
